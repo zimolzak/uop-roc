@@ -1,15 +1,37 @@
 #!/usr/bin/Rscript
 require(ggplot2)
-myhistog <- qplot(rnorm(150))
-ggsave('histogram.png', myhistog, width=7, height=7, dpi=100)
-
 P = read.csv("Performance.csv")
+endpoints = rbind(data.frame(TimeThreshold=1, sp=1, sn=0, VolThreshold=0), 
+                  data.frame(TimeThreshold=1, sp=0, sn=1, VolThreshold=Inf)
+                 )
+for (i in 2:12) {
+endpoints = rbind(endpoints,
+                  data.frame(TimeThreshold=i, sp=1, sn=0, VolThreshold=0), 
+                  data.frame(TimeThreshold=i, sp=0, sn=1, VolThreshold=Inf)
+                 )
+}
+fullappend = rbind(endpoints, P[ , c("sp", "sn", "TimeThreshold", "VolThreshold")])
 
-qplot(x=sp, y=sn, data=P[P$TimeThreshold==6, ], xlim=c(1,0), ylim=c(0,1))
 
-fancyplot <- ggplot(P[P$TimeThreshold >= 5, ], aes(x=sp, y=sn, color=as.factor(TimeThreshold), group=TimeThreshold))
-fancyplot + geom_line() + xlim(1,0) + ylim(0,1)
 
-Pw = cbind( P, wid= (P$TimeThreshold == 6) * 0.5 + 0.1)
-widplot <- ggplot(Pw[Pw$TimeThreshold >= 5, ], aes(x=sp, y=sn, color=as.factor(TimeThreshold), size=wid))
-widplot + geom_line() + xlim(1,0) + ylim(0,1) + scale_size(range=c(0, 2))
+
+onecurve  <- ggplot(fullappend[fullappend$TimeThreshold==6, ], aes(x=sp, y=sn, label=VolThreshold))
+onecurve + geom_line(size=2) + xlim(1,0) + ylim(0,1) + geom_abline(intercept=1, slope=1) + geom_text()
+
+
+
+
+eightcurves <- ggplot(fullappend[fullappend$TimeThreshold >= 5, ], aes(x=sp, y=sn, color=as.factor(TimeThreshold), group=TimeThreshold, label=VolThreshold))
+eightcurves + geom_line() + xlim(1,0) + ylim(0,1) + geom_abline(intercept=1, slope=1) + geom_text()
+
+
+
+
+Pw = cbind( fullappend, wid= (fullappend$TimeThreshold == 6) * 1 + 1)
+widplot <- ggplot(Pw[Pw$TimeThreshold >= 5, ], aes(x=sp, y=sn, color=as.factor(wid), size=wid, label=VolThreshold, group=TimeThreshold))
+widplot + geom_line() + xlim(1,0) + ylim(0,1) + scale_size(range=c(0.5, 2)) + geom_abline(intercept=1, slope=1) + labs(x="Specificity", y="Sensitivity") + theme(legend.position="none")
+
+
+
+
+# ggsave('filename.png', plotname, width=7, height=7, dpi=100)
