@@ -1,0 +1,7 @@
+ install.packages(c("ggplot2", "plyr", "digest", "reshape2", "scales"), repos="http://cran.mtu.edu/")
+
+
+ install.packages(c("ggplot2"), dependencies = TRUE, repos="http://cran.mtu.edu/")
+
+# requires '/usr/bin/make' gfortran
+
