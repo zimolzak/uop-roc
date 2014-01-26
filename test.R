@@ -31,8 +31,8 @@ Pw = cbind( fullappend, wid= (fullappend$TimeThreshold == 6) * 1 + 1)
 widplot <- ggplot(Pw[Pw$TimeThreshold >= 5, ], aes(x=sp, y=sn, color=as.factor(wid), size=wid, label=VolThreshold, group=TimeThreshold))
 widplot + geom_line() + xlim(1,0) + ylim(0,1) + scale_size(range=c(0.5, 2)) + geom_abline(intercept=1, slope=1) + labs(x="Specificity", y="Sensitivity", title="Time Threshold 6 Hr in bold") + theme(legend.position="none")
 
-
-
+# Scale_size() and theme() fail on R 2.14.0 and ggplot2_0.8.9.
+# Consider scale_size_continuous(to=c(0.5, 2)). Or just upgrade your
+# R! Works on R 3.0.2 + ggplot2_0.9.3.1. Hint: sessionInfo().
 
 # ggsave('filename.png', plotname, width=7, height=7, dpi=100)
-
